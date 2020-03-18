@@ -2,11 +2,13 @@ const pjson = require('../package.json')
 import * as Config from '@oclif/config'
 import * as Errors from '@oclif/errors'
 import * as Parser from '@oclif/parser'
+import open from 'open'
 import Help from '@oclif/plugin-help'
 import {format, inspect} from 'util'
 
 import * as flags from './flags'
 import {sortBy, uniqBy} from './util'
+import { Server } from '../server/Server'
 
 /**
  * swallows stdout epipe errors
@@ -67,6 +69,8 @@ export default abstract class Command {
 
   static parserOptions = {}
 
+  static isServerAlreadyrunning = false
+
   /**
    * instantiate and run the command
    * @param {Config.Command.Class} this Class
@@ -76,8 +80,16 @@ export default abstract class Command {
   static run: Config.Command.Class['run'] = async function (this: Config.Command.Class, argv?: string[], opts?) {
     if (!argv) argv = process.argv.slice(2)
     const config = await Config.load(opts || (module.parent && module.parent.parent && module.parent.parent.filename) || __dirname)
-    const cmd = new this(argv, config)
-    return cmd._run(argv)
+    
+    if (!Command.isServerAlreadyrunning) {
+      const server =  new Server(config, config.commands)
+      await server.startServer()
+      await open('http://localhost:3000');
+      Command.isServerAlreadyrunning =  true
+    } else {
+      const cmd = new this(argv, config)
+      return cmd._run(argv)
+    }
   }
 
   id: string | undefined
@@ -129,10 +141,19 @@ export default abstract class Command {
     return Errors.error(input, options as any)
   }
 
+  static logs: string = ''
+
   log(message = '', ...args: any[]) {
     // tslint:disable-next-line strict-type-predicates
     message = typeof message === 'string' ? message : inspect(message)
     process.stdout.write(format(message, ...args) + '\n')
+    Command.logs += format(message, ...args) + '\n'
+  }
+
+  static getAndClearLogs(): string {
+    const logsCopy = Command.logs
+    Command.logs = ''
+    return logsCopy
   }
 
   /**

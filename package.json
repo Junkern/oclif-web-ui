@@ -1,15 +1,18 @@
 {
-  "name": "@oclif/command",
-  "description": "oclif base command",
-  "version": "1.5.19",
-  "author": "Jeff Dickey @jdxcode",
-  "bugs": "https://github.com/oclif/command/issues",
+  "name": "oclif-web-ui",
+  "description": "A Web UI for any CLI written with oclif",
+  "version": "0.1.0",
+  "author": "Martin Wentzel @junkern",
+  "bugs": "https://github.com/Junkern/oclif-web-ui/issues",
   "dependencies": {
     "@oclif/config": "^1",
     "@oclif/errors": "^1.2.2",
     "@oclif/parser": "^3.8.3",
     "@oclif/plugin-help": "^2",
     "debug": "^4.1.1",
+    "fastify": "^2.12.1",
+    "fastify-static": "^2.6.0",
+    "open": "^7.0.3",
     "semver": "^5.6.0"
   },
   "devDependencies": {
@@ -41,9 +44,11 @@
     "/flush.js",
     "/lib"
   ],
-  "homepage": "https://github.com/oclif/command",
+  "homepage": "https://github.com/Junkern/oclif-web-ui",
   "keywords": [
-    "oclif"
+    "oclif",
+    "cli",
+    "web-cli"
   ],
   "license": "MIT",
   "main": "lib/index.js",
@@ -55,7 +60,8 @@
   },
   "repository": "oclif/command",
   "scripts": {
-    "build": "rm -rf lib && tsc",
+    "build": "rm -rf lib && tsc && cp package.json lib/package.json && mkdir -p ./lib/web-cli && cd web-cli && npm run build && cp -r dist ../lib/web-cli",
+    "tsc": "tsc",
     "lint": "eslint . --ext .ts --config .eslintrc",
     "posttest": "yarn lint",
     "prepublishOnly": "yarn run build",

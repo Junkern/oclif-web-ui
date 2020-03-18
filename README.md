@@ -1,102 +1,30 @@
-@oclif/command
+oclif-web-ui
 ===============
 
-oclif base command
+This projects aims to be a drop-in replacement for [https://github.com/oclif/command](@oclif/command) in order to have a web UI for any CLI written with [https://oclif.io/](oclif)
 
-[![Version](https://img.shields.io/npm/v/@oclif/command.svg)](https://npmjs.org/package/@oclif/command)
-[![CircleCI](https://circleci.com/gh/oclif/command/tree/master.svg?style=shield)](https://circleci.com/gh/oclif/command/tree/master)
-[![Appveyor CI](https://ci.appveyor.com/api/projects/status/github/oclif/command?branch=master&svg=true)](https://ci.appveyor.com/project/heroku/command/branch/master)
-[![Codecov](https://codecov.io/gh/oclif/command/branch/master/graph/badge.svg)](https://codecov.io/gh/oclif/command)
-[![Known Vulnerabilities](https://snyk.io/test/npm/@oclif/command/badge.svg)](https://snyk.io/test/npm/@oclif/command)
-[![Downloads/week](https://img.shields.io/npm/dw/@oclif/command.svg)](https://npmjs.org/package/@oclif/command)
-[![License](https://img.shields.io/npm/l/@oclif/command.svg)](https://github.com/oclif/command/blob/master/package.json)
+# Motivation
 
-This is about half of the main codebase for oclif. The other half lives in [@oclif/config](https://github.com/oclif/config). This can be used directly, but it probably makes more sense to build your CLI with the [generator](https://github.com/oclif/oclif).
+I wrote many CLI tools for developers, because they are easy to use and develop (no hastling with UIs). That's why I also wrote some easy CLI tools for non-technical people, but as they often had no experience with CLIs, they had trouble understanding them at first.
 
-Usage
-=====
+That's when I got the idea to create a tool that automatically creates a nice Web UI for your CLI.
 
-Without the generator, you can create a simple CLI like this:
+# Usage
 
-**TypeScript**
-```js
-#!/usr/bin/env ts-node
+Simply replace any occurence of `@oclif/command` with `oclif-web-ui` in your cli code. This should only affect import statements.
 
-import * as fs from 'fs'
-import {Command, flags} from '@oclif/command'
+Afterwards, run your cli, your browser should open with yn UI view of your commands.
 
-class LS extends Command {
-  static flags = {
-    version: flags.version(),
-    help: flags.help(),
-    // run with --dir= or -d=
-    dir: flags.string({
-      char: 'd',
-      default: process.cwd(),
-    }),
-  }
+# How it works
 
-  async run() {
-    const {flags} = this.parse(LS)
-    let files = fs.readdirSync(flags.dir)
-    for (let f of files) {
-      this.log(f)
-    }
-  }
-}
+In the base `Command` class I intercept the `run` command and pass the cli config, which contains all information about the cli (commands, plugins...) to a local server class which I then start locally. Afterwards I open a browser and a localhost application (served from the local server instance) uses the cli config to display a nice UI of all commands, flags, options and so on.
 
-LS.run()
-.catch(require('@oclif/errors/handle'))
-```
 
-**JavaScript**
-```js
-#!/usr/bin/env node
+# TODO
 
-const fs = require('fs')
-const {Command, flags} = require('@oclif/command')
+* hooks are not run anymore
+* Implement showing and executing flags
+* Implement showing and executing arguments
+* (UI-)Tests
+* CLI should exit when users closes the browser-window
 
-class LS extends Command {
-  async run() {
-    const {flags} = this.parse(LS)
-    let files = fs.readdirSync(flags.dir)
-    for (let f of files) {
-      this.log(f)
-    }
-  }
-}
-
-LS.flags = {
-  version: flags.version(),
-  help: flags.help(),
-  // run with --dir= or -d=
-  dir: flags.string({
-    char: 'd',
-    default: process.cwd(),
-  }),
-}
-
-LS.run()
-.catch(require('@oclif/errors/handle'))
-```
-
-Then run either of these with:
-
-```sh-session
-$ ./myscript
-...files in current dir...
-$ ./myscript --dir foobar
-...files in ./foobar...
-$ ./myscript --version
-myscript/0.0.0 darwin-x64 node-v9.5.0
-$ ./myscript --help
-USAGE
-  $ @oclif/command
-
-OPTIONS
-  -d, --dir=dir  [default: /Users/jdickey/src/github.com/oclif/command]
-  --help         show CLI help
-  --version      show CLI version
-```
-
-See the [generator](https://github.com/oclif/oclif) for all the options you can pass to the command.
