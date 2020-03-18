@@ -60,7 +60,7 @@
   },
   "repository": "oclif/command",
   "scripts": {
-    "build": "rm -rf lib && tsc && cp package.json lib/package.json && mkdir -p ./lib/web-cli && cd web-cli && npm run build && cp -r dist ../lib/web-cli",
+    "build": "rm -rf lib && tsc && mkdir -p ./lib/web-cli && cd web-cli && npm run build && cp -r dist ../lib/web-cli",
     "tsc": "tsc",
     "lint": "eslint . --ext .ts --config .eslintrc",
     "posttest": "yarn lint",

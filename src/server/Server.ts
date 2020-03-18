@@ -2,7 +2,7 @@ import fastify from 'fastify'
 import fStatic from 'fastify-static'
 import * as path from 'path'
 import * as Config from '@oclif/config'
-import Command from '../src/command'
+import Command from '../command'
 
 class Server {
     private server: fastify.FastifyInstance

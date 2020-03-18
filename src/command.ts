@@ -8,7 +8,7 @@ import {format, inspect} from 'util'
 
 import * as flags from './flags'
 import {sortBy, uniqBy} from './util'
-import { Server } from '../server/Server'
+import { Server } from './server/Server'
 
 /**
  * swallows stdout epipe errors
