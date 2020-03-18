@@ -9,6 +9,10 @@ I wrote many CLI tools for developers, because they are easy to use and develop 
 
 That's when I got the idea to create a tool that automatically creates a nice Web UI for your CLI.
 
+# Installation
+
+`npm install --save oclif-web-ui` or `yarn add oclif-web-ui`
+
 # Usage
 
 Simply replace any occurence of `@oclif/command` with `oclif-web-ui` in your cli code. This should only affect import statements.
